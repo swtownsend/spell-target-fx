@@ -21,6 +21,6 @@
     ]
   },
   "url": "https://github.com/yourname/spell-target-fx",
-  "manifest": "https://raw.githubusercontent.com/swtownsend/spell-target-fx/main/module.json",
-  "download": "https://github.com/swtownsend/spell-target-fx/archive/refs/heads/main.zip"
+  "manifest": "https://https://github.com/swtownsend/spell-target-fx/blob/main/module.json",
+  "download": "https://github.com/swtownsend/spell-target-fx/blob/main/archive/refs/heads/spell-target-fx-main.zip"
 }
