@@ -20,7 +20,7 @@
       { "id": "jb2a", "type": "module" }
     ]
   },
-  "url": "https://github.com/yourname/spell-target-fx",
+  "url": "https://github.com/swtownsend/spell-target-fx",
   "manifest": "https://github.com/swtownsend/spell-target-fx/blob/main/module.json",
   "download": "https://github.com/swtownsend/spell-target-fx/blob/main/archive/refs/heads/spell-target-fx-main.zip"
 }
