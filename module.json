@@ -2,16 +2,18 @@
   "id": "spell-target-fx",
   "title": "Spell Target FX",
   "description": "Displays a customizable visual effect on the target(s) of a spell when it is cast.",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "compatibility": {
-    "minimum": "14",
+    "minimum": "13",
     "verified": "14"
   },
-  "authors": [{ "name": "Scott Townsend" }],
+  "authors": [{ "name": "Your Name" }],
   "esmodules": ["src/main.js"],
   "styles": ["styles/fx.css"],
+  "templates": ["templates/spell-fx-config.hbs"],
   "languages": [{ "lang": "en", "name": "English", "path": "lang/en.json" }],
   "relationships": {
+    "requires": [],
     "optional": [
       { "id": "sequencer", "type": "module" },
       { "id": "socketlib", "type": "module" },
