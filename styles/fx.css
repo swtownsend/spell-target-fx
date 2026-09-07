@@ -1,0 +1,8 @@
+@layer spell-target-fx {
+  .spell-target-fx-config footer {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+    padding-top: 0.5rem;
+  }
+}
