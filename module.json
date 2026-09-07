@@ -4,10 +4,10 @@
   "description": "Displays a customizable visual effect on the target(s) of a spell when it is cast.",
   "version": "0.1.0",
   "compatibility": {
-    "minimum": "12",
-    "verified": "12"
+    "minimum": "14",
+    "verified": "14"
   },
-  "authors": [{ "name": "Your Name" }],
+  "authors": [{ "name": "Scott Townsend" }],
   "esmodules": ["src/main.js"],
   "styles": ["styles/fx.css"],
   "languages": [{ "lang": "en", "name": "English", "path": "lang/en.json" }],
@@ -19,6 +19,6 @@
     ]
   },
   "url": "https://github.com/yourname/spell-target-fx",
-  "manifest": "https://raw.githubusercontent.com/you/spell-target-fx/main/module.json",
-  "download": "https://github.com/you/spell-target-fx/archive/refs/heads/main.zip"
+  "manifest": "https://raw.githubusercontent.com/swtownsend/spell-target-fx/main/module.json",
+  "download": "https://github.com/swtownsend/spell-target-fx/archive/refs/heads/main.zip"
 }
