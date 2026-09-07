@@ -16,12 +16,9 @@ Hooks.once("init", () => {
 });
 
 Hooks.once("ready", () => {
-  // Expose an API usable from macros: game.modules.get("spell-target-fx").api
-  const mod = game.modules.get(MODULE_ID);
-  mod.api = { playFx };
+  game.modules.get(MODULE_ID).api = { playFx };
 });
 
-// Every client receives this hook, so the visual renders for all players.
 Hooks.on("createChatMessage", async (message) => {
   try {
     const config = resolveSpellFxConfig(message);
@@ -32,17 +29,24 @@ Hooks.on("createChatMessage", async (message) => {
 
     await playFx(tokens, config);
   } catch (err) {
-    console.error(`spell-target-fx | createChatMessage failed`, err);
+    console.error(`${MODULE_ID} | createChatMessage failed`, err);
   }
 });
 
-// Per-spell configuration button on spell sheets.
-Hooks.on("getItemSheetHeaderButtons", (sheet, buttons) => {
-  if (sheet.object?.type !== "spell") return;
-  buttons.unshift({
+// v13+/v14: header CONTROLS on the v2 item sheets, not v1 header buttons.
+Hooks.on("getItemSheetHeaderControls", (sheet, controls) => {
+  if (sheet.document?.type !== "spell") return;
+  controls.push({
+    action: "spell-target-fx-open-config",
     label: "Target FX",
-    icon: "fas fa-wand-magic-sparkles",
-    class: "spell-target-fx-config",
-    onClick: () => new SpellTargetFxConfig(sheet.object).render(true)
+    icon: "fas fa-wand-magic-sparkles"
+  });
+});
+
+// Route the control's click through the sheet's action system (v2 pattern).
+Hooks.on("renderItemSheet", (sheet) => {
+  const button = sheet.element?.querySelector('[data-action="spell-target-fx-open-config"]');
+  button?.addEventListener("click", () => {
+    new SpellTargetFxConfig({ document: sheet.document }).render(true);
   });
 });
