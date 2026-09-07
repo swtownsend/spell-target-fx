@@ -1,9 +1,6 @@
 const MODULE_ID = "spell-target-fx";
 
-/**
- * Single FX dispatcher. Decides between the Sequencer/JB2A path and
- * the native canvas fallback based on cfg.mode and availability.
- */
+/** Single FX dispatcher: Sequencer/JB2A path vs. native canvas fallback. */
 export async function playFx(tokenDocs, cfg) {
   if (!tokenDocs.length) return;
 
@@ -24,7 +21,8 @@ export async function playFx(tokenDocs, cfg) {
 }
 
 /**
- * Fallback: a fading colored ring drawn over the token.
+ * Fallback ring. Uses raw PIXI + Ticker instead of the deprecated
+ * global CanvasAnimation class (migrated into foundry.canvas.* in v13/14).
  */
 export async function nativeRingFx(color, duration, tokenDocs) {
   const graphics = [];
@@ -33,23 +31,46 @@ export async function nativeRingFx(color, duration, tokenDocs) {
     const mesh = doc.object;
     if (!mesh) continue;
 
-    const size = Math.max(mesh.w, mesh.h);
-    const g = new PIXI.Graphics();
-    g.lineStyle(4, stringToHex(color), 0.9);
-    g.drawCircle(mesh.w / 2, mesh.h / 2, Math.max(mesh.w, mesh.h) * 0.55);
+    // TokenDocument dimensions in grid units -> pixels, stable across v12–v14
+    const px = (doc.width ?? 1) * canvas.grid.size;
+    const g = createRing(px, color);
     mesh.addChild(g);
     graphics.push(g);
   }
 
   if (!graphics.length) return;
 
-  await CanvasAnimation.animateLinear(
-    Object.fromEntries(graphics.map((g) => [String(g.id), { alpha: [1, 0] }])),
-    { name: `${MODULE_ID}-ring`, duration: Math.max(1, Number(cfg?.duration ?? 1500)) }
-  );
-  for (const g of graphics) g.destroy();
+  // Manual fade — no CanvasAnimation dependency.
+  await new Promise((resolve) => {
+    const start = performance.now();
+    const tick = () => {
+      const t = Math.min(1, (performance.now() - start) / Math.max(1, duration));
+      for (const g of graphics) g.alpha = 1 - t;
+      if (t >= 1) {
+        PIXI.Ticker.shared.remove(tick);
+        for (const g of graphics) g.destroy();
+        return resolve();
+      }
+    };
+    PIXI.Ticker.shared.add(tick);
+  });
 }
 
-function stringToHex(css) {
+/** Pixi v7 vs v8-safe circle stroke (lineStyle is gone in v8). */
+function createRing(size, cssColor) {
+  const g = new PIXI.Graphics();
+  const r = size * 0.55;
+  const cx = size / 2, cy = size / 2;
+  if (typeof g.setStrokeStyle === "function") {
+    g.setStrokeStyle({ width: 4, color: cssToInt(cssColor), alpha: 0.9 });
+    g.circle(cx, cy, r).stroke();
+  } else {
+    g.lineStyle(4, cssToInt(cssColor), 0.9);
+    g.drawCircle(cx, cy, r);
+  }
+  return g;
+}
+
+function cssToInt(css) {
   return parseInt(css.replace("#", ""), 16);
 }
